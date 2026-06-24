@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookVault - Premium E-Book Library</title>
+    <meta name="description" content="BookVault is a premium e-book library with thousands of titles across various categories. Download your favorite books instantly." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+
+    <!-- Tailwind CSS via CDN (for demo only; use build step for production) -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark {
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 8px;
+        }
+        body.dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        body.dark ::-webkit-scrollbar-thumb {
+            background: #60a5fa;
+        }
+
+        /* ── Utilities ── */
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        body.dark .glass {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+        }
+        body.dark .card-hover:hover {
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s, transform 0.15s;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: scale(1.02);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+            padding: 0.6rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+            padding: 0.5rem 1.2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* ── Admin Sidebar ── */
+        .admin-sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: #0f172a;
+            color: #f1f5f9;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+        }
+        .admin-sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            color: #94a3b8;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .admin-sidebar .nav-item:hover {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+        .admin-sidebar .nav-item.active {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .admin-sidebar .nav-item i {
+            width: 1.5rem;
+            text-align: center;
+        }
+        .admin-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            .admin-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .admin-toggle {
+                display: block !important;
+            }
+        }
+        .admin-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* ── Cards ── */
+        .book-card {
+            background: #fff;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        }
+        body.dark .book-card {
+            background: #1e293b;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        .book-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.18);
+        }
+        body.dark .book-card:hover {
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+        }
+        .book-cover {
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            width: 100%;
+            background: #e2e8f0;
+        }
+        body.dark .book-cover {
+            background: #334155;
+        }
+
+        /* ── Form ── */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fff;
+            color: #0f172a;
+        }
+        body.dark .form-input {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            color: #0f172a;
+        }
+        body.dark .form-label {
+            color: #f1f5f9;
+        }
+
+        /* ── Toast ── */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            background: #0f172a;
+            color: #fff;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            font-weight: 500;
+            animation: slideUp 0.35s ease;
+            max-width: 380px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .toast.success {
+            background: #16a34a;
+        }
+        .toast.error {
+            background: #dc2626;
+        }
+        .toast.warning {
+            background: #f59e0b;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ── Misc ── */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .badge-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        body.dark .badge-blue {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+        .badge-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        body.dark .badge-green {
+            background: #14532d;
+            color: #86efac;
+        }
+        .badge-gold {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        body.dark .badge-gold {
+            background: #78350f;
+            color: #fcd34d;
+        }
+
+        .skeleton {
+            animation: pulse 1.5s ease-in-out infinite;
+            background: #e2e8f0;
+            border-radius: 0.75rem;
+        }
+        body.dark .skeleton {
+            background: #334155;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Mobile menu overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            display: none;
+        }
+        .mobile-overlay.open {
+            display: block;
+        }
+
+        /* Ad placeholder */
+        .ad-placeholder {
+            background: #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            border: 2px dashed #cbd5e1;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.dark .ad-placeholder {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 640px) {
+            .container-custom {
+                padding: 0 1rem;
+            }
+            .book-cover {
+                aspect-ratio: 2/3;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <!-- ─── REACT + FIREBASE (via CDN) ─── -->
+    <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react@18.2.0",
+                "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+                "react-router-dom": "https://esm.sh/react-router-dom@6.20.1",
+                "firebase/app": "https://esm.sh/firebase@10.7.1/app",
+                "firebase/auth": "https://esm.sh/firebase@10.7.1/auth",
+                "firebase/firestore": "https://esm.sh/firebase@10.7.1/firestore"
+                // Analytics is removed to avoid component registration error
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  IMPORTS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        import React, {
+            useState,
+            useEffect,
+            useRef,
+            useCallback,
+            useMemo,
+            createContext,
+            useContext,
+            Fragment
+        } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import {
+            BrowserRouter,
+            Routes,
+            Route,
+            Link,
+            useNavigate,
+            useParams,
+            useLocation,
+            Navigate
+        } from 'react-router-dom';
+
+        import { initializeApp } from 'firebase/app';
+        // Analytics is not imported to avoid the error
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            onAuthStateChanged,
+            signOut
+        } from 'firebase/auth';
+        import {
+            getFirestore,
+            collection,
+            doc,
+            getDocs,
+            getDoc,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            query,
+            where,
+            orderBy,
+            limit,
+            startAfter,
+            onSnapshot,
+            setDoc,
+            serverTimestamp,
+            increment,
+            runTransaction,
+            writeBatch
+        } from 'firebase/firestore';
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  FIREBASE CONFIG (your actual config)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtZ-yX7RnJfBCUxA724-02xK3MoUWmkM8",
+            authDomain: "e-book-library-a1d30.firebaseapp.com",
+            projectId: "e-book-library-a1d30",
+            storageBucket: "e-book-library-a1d30.firebasestorage.app",
+            messagingSenderId: "660215647633",
+            appId: "1:660215647633:web:e14fcf8baff2b6f8aa1e30",
+            measurementId: "G-2EJQWB1THZ" // Kept but not used (optional)
+        };
+
+        const app = initializeApp(firebaseConfig);
+        // getAnalytics is not called
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  CONTEXT
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const AppContext = createContext();
+
+        function AppProvider({ children }) {
+            const [user, setUser] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [darkMode, setDarkMode] = useState(() =>
+                localStorage.getItem('bookvault-theme') === 'dark'
+            );
+            const [toasts, setToasts] = useState([]);
+            const [books, setBooks] = useState([]);
+            const [categories, setCategories] = useState([]);
+            const [featuredBooks, setFeaturedBooks] = useState([]);
+            const [bookmarks, setBookmarks] = useState(() =>
+                JSON.parse(localStorage.getItem('bookvault-bookmarks') || '[]')
+            );
+            const [stats, setStats] = useState({ totalBooks: 0, totalDownloads: 0, totalCategories: 0 });
+
+            // ── Auth ──
+            useEffect(() => {
+                const unsub = onAuthStateChanged(auth, (u) => {
+                    setUser(u);
+                    setLoading(false);
+                });
+                return () => unsub();
+            }, []);
+
+            // ── Theme ──
+            useEffect(() => {
+                if (darkMode) {
+                    document.body.classList.add('dark');
+                    localStorage.setItem('bookvault-theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark');
+                    localStorage.setItem('bookvault-theme', 'light');
+                }
+            }, [darkMode]);
+
+            // ── Books (realtime) ──
+            useEffect(() => {
+                const q = query(collection(db, 'books'), orderBy('createdAt', 'desc'));
+                const unsub = onSnapshot(q, (snap) => {
+                    const list = [];
+                    snap.forEach((d) => list.push({ id: d.id, ...d.data() }));
+                    setBooks(list);
+                    // Featured
+                    const featured = list.filter((b) => b.featured === true);
+                    setFeaturedBooks(featured);
+                    // Categories
+                    const catSet = new Set();
+                    list.forEach((b) => b.category && catSet.add(b.category));
+                    setCategories(Array.from(catSet));
+                    // Stats
+                    let downloads = 0;
+                    list.forEach((b) => downloads += (b.downloads || 0));
+                    setStats({
+                        totalBooks: list.length,
+                        totalDownloads: downloads,
+                        totalCategories: catSet.size
+                    });
+                });
+                return () => unsub();
+            }, []);
+
+            // ── Bookmarks ──
+            useEffect(() => {
+                localStorage.setItem('bookvault-bookmarks', JSON.stringify(bookmarks));
+            }, [bookmarks]);
+
+            const toggleBookmark = (bookId) => {
+                setBookmarks((prev) =>
+                    prev.includes(bookId) ? prev.filter((id) => id !== bookId) : [...prev, bookId]
+                );
+            };
+
+            const isBookmarked = (bookId) => bookmarks.includes(bookId);
+
+            // ── Toast ──
+            const addToast = (message, type = 'success') => {
+                const id = Date.now();
+                setToasts((prev) => [...prev, { id, message, type }]);
+                setTimeout(() => {
+                    setToasts((prev) => prev.filter((t) => t.id !== id));
+                }, 4000);
+            };
+
+            const removeToast = (id) => {
+                setToasts((prev) => prev.filter((t) => t.id !== id));
+            };
+
+            // ── Admin check ──
+            const isAdmin = useMemo(() => {
+                // In production, use custom claims or an admin collection
+                // For demo: any logged-in user with email containing "admin"
+                if (!user) return false;
+                return user.email?.toLowerCase().includes('admin') || false;
+            }, [user]);
+
+            const value = {
+                user,
+                loading,
+                darkMode,
+                setDarkMode,
+                books,
+                categories,
+                featuredBooks,
+                bookmarks,
+                toggleBookmark,
+                isBookmarked,
+                stats,
+                addToast,
+                toasts,
+                removeToast,
+                isAdmin,
+                db,
+                auth
+            };
+
+            return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+        }
+
+        function useApp() {
+            return useContext(AppContext);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  TOAST CONSUMER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function ToastContainer() {
+            const { toasts, removeToast } = useApp();
+            if (!toasts.length) return null;
+            return (
+                <div className="toast-container">
+                    {toasts.map((t) => (
+                        <div key={t.id} className={`toast ${t.type}`} onClick={() => removeToast(t.id)}>
+                            <i className={`fas ${t.type === 'success' ? 'fa-check-circle' : t.type === 'error' ? 'fa-exclamation-circle' : 'fa-triangle-exclamation'}`} />
+                            {t.message}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  LAYOUT: PUBLIC
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function PublicLayout({ children }) {
+            const { darkMode, setDarkMode, user, isAdmin, addToast, stats } = useApp();
+            const navigate = useNavigate();
+            const location = useLocation();
+            const [menuOpen, setMenuOpen] = useState(false);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [searchResults, setSearchResults] = useState([]);
+            const [showSearch, setShowSearch] = useState(false);
+            const searchRef = useRef(null);
+
+            const handleSearch = (q) => {
+                setSearchQuery(q);
+                if (q.trim().length > 0) {
+                    const results = stats.books?.filter((b) =>
+                        b.title?.toLowerCase().includes(q.toLowerCase()) ||
+                        b.author?.toLowerCase().includes(q.toLowerCase()) ||
+                        b.category?.toLowerCase().includes(q.toLowerCase())
+                    ) || [];
+                    setSearchResults(results);
+                    setShowSearch(true);
+                } else {
+                    setSearchResults([]);
+                    setShowSearch(false);
+                }
+            };
+
+            useEffect(() => {
+                const handler = (e) => {
+                    if (searchRef.current && !searchRef.current.contains(e.target)) {
+                        setShowSearch(false);
+                    }
+                };
+                document.addEventListener('click', handler);
+                return () => document.removeEventListener('click', handler);
+            }, []);
+
+            const navLinks = [
+                { to: '/', label: 'Home', icon: 'fa-house' },
+                { to: '/books', label: 'Books', icon: 'fa-book' },
+                { to: '/categories', label: 'Categories', icon: 'fa-tags' },
+                { to: '/about', label: 'About', icon: 'fa-info-circle' },
+                { to: '/contact', label: 'Contact', icon: 'fa-envelope' },
+            ];
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    {/* ─── HEADER ─── */}
+                    <header className="glass sticky top-0 z-50">
+                        <div className="container-custom flex items-center justify-between h-16 md:h-20">
+                            {/* Logo */}
+                            <Link to="/" className="flex items-center gap-2 text-2xl font-extrabold text-blue-600 dark:text-blue-400">
+                                <span className="text-3xl">📚</span>
+                                <span>BookVault</span>
+                            </Link>
+
+                            {/* Desktop Nav */}
+                            <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.to}
+                                        to={link.to}
+                                        className={`px-4 py-2 rounded-full transition-colors ${location.pathname === link.to ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'hover:bg-gray-200/60 dark:hover:bg-gray-700/40'}`}
+                                    >
+                                        <i className={`fas ${link.icon} mr-1.5`} /> {link.label}
+                                    </Link>
+                                ))}
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                    >
+                                        <i className="fas fa-lock mr-1.5" /> Admin
+                                    </Link>
+                                )}
+                            </nav>
+
+                            {/* Right side */}
+                            <div className="flex items-center gap-3">
+                                {/* Search */}
+                                <div className="relative" ref={searchRef}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search books..."
+                                        value={searchQuery}
+                                        onChange={(e) => handleSearch(e.target.value)}
+                                        className="w-36 md:w-56 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+                                    />
+                                    <i className="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    {showSearch && searchResults.length > 0 && (
+                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto z-50">
+                                            {searchResults.slice(0, 8).map((b) => (
+                                                <Link
+                                                    key={b.id}
+                                                    to={`/book/${b.id}`}
+                                                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                                    onClick={() => { setShowSearch(false);
+                                                        setSearchQuery(''); }}
+                                                >
+                                                    <img src={b.coverUrl || 'https://via.placeholder.com/40x60/3b82f6/fff?text=📖'} alt={b.title} className="w-8 h-12 object-cover rounded" />
+                                                    <div>
+                                                        <div className="font-semibold text-sm">{b.title}</div>
+                                                        <div className="text-xs text-gray-500 dark:text-gray-400">{b.author}</div>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                            {searchResults.length > 8 && (
+                                                <div className="px-4 py-2 text-center text-sm text-gray-500 border-t border-gray-100 dark:border-gray-700">
+                                                    +{searchResults.length - 8} more results
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                    {showSearch && searchResults.length === 0 && searchQuery.length > 1 && (
+                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 text-center text-gray-500 z-50">
+                                            No books found for "{searchQuery}"
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Dark Mode Toggle */}
+                                <button
+                                    onClick={() => setDarkMode(!darkMode)}
+                                    className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-lg transition-colors hover:bg-gray-300 dark:hover:bg-gray-600"
+                                    aria-label="Toggle dark mode"
+                                >
+                                    {darkMode ? '☀️' : '🌙'}
+                                </button>
+
+                                {/* Mobile menu button */}
+                                <button
+                                    onClick={() => setMenuOpen(!menuOpen)}
+                                    className="md:hidden w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-lg"
+                                >
+                                    <i className={`fas ${menuOpen ? 'fa-times' : 'fa-bars'}`} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile Menu */}
+                        {menuOpen && (
+                            <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur px-4 py-3">
+                                <nav className="flex flex-col gap-1">
+                                    {navLinks.map((link) => (
+                                        <Link
+                                            key={link.to}
+                                            to={link.to}
+                                            className={`px-4 py-2.5 rounded-xl transition-colors ${location.pathname === link.to ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                            onClick={() => setMenuOpen(false)}
+                                        >
+                                            <i className={`fas ${link.icon} mr-3 w-5 text-center`} /> {link.label}
+                                        </Link>
+                                    ))}
+                                    {isAdmin && (
+                                        <Link
+                                            to="/admin"
+                                            className="px-4 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                            onClick={() => setMenuOpen(false)}
+                                        >
+                                            <i className="fas fa-lock mr-3 w-5 text-center" /> Admin Panel
+                                        </Link>
+                                    )}
+                                </nav>
+                            </div>
+                        )}
+                    </header>
+
+                    {/* ─── MAIN ─── */}
+                    <main className="flex-1 py-6 md:py-10">
+                        <div className="container-custom">
+                            {children}
+                        </div>
+                    </main>
+
+                    {/* ─── FOOTER ─── */}
+                    <footer className="border-t border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60 backdrop-blur py-8">
+                        <div className="container-custom">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                                <div>
+                                    <h4 className="font-bold text-lg mb-3">📚 BookVault</h4>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Your premium e-book library with thousands of titles.</p>
+                                </div>
+                                <div>
+                                    <h5 className="font-semibold mb-2">Quick Links</h5>
+                                    <ul className="text-sm space-y-1.5 text-gray-600 dark:text-gray-400">
+                                        <li><Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400">Home</Link></li>
+                                        <li><Link to="/books" className="hover:text-blue-600 dark:hover:text-blue-400">Books</Link></li>
+                                        <li><Link to="/categories" className="hover:text-blue-600 dark:hover:text-blue-400">Categories</Link></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 className="font-semibold mb-2">Legal</h5>
+                                    <ul className="text-sm space-y-1.5 text-gray-600 dark:text-gray-400">
+                                        <li><Link to="/privacy" className="hover:text-blue-600 dark:hover:text-blue-400">Privacy Policy</Link></li>
+                                        <li><Link to="/terms" className="hover:text-blue-600 dark:hover:text-blue-400">Terms &amp; Conditions</Link></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 className="font-semibold mb-2">Connect</h5>
+                                    <div className="flex gap-3 text-xl">
+                                        <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"><i className="fab fa-twitter" /></a>
+                                        <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"><i className="fab fa-github" /></a>
+                                        <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"><i className="fab fa-linkedin" /></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="border-t border-gray-200 dark:border-gray-800 mt-6 pt-4 text-center text-sm text-gray-500 dark:text-gray-500">
+                                &copy; {new Date().getFullYear()} BookVault. All rights reserved.
+                            </div>
+                        </div>
+                    </footer>
+
+                    <ToastContainer />
+                </div>
+            );
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  PAGES
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // ── Home ──
+        function HomePage() {
+            const { books, featuredBooks, categories, stats, darkMode } = useApp();
+            const navigate = useNavigate();
+
+            const recentBooks = books.slice(0, 8);
+            const popularBooks = [...books].sort((a, b) => (b.downloads || 0) - (a.downloads || 0)).slice(0, 6);
+
+            return (
+                <div className="space-y-12">
+                    {/* Hero */}
+                    <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 md:p-14">
+                        <div className="relative z-10 max-w-2xl">
+                            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
+                                Discover Your Next <br />Favorite Book
+                            </h1>
+                            <p className="mt-3 text-blue-100 text-lg max-w-md">
+                                Thousands of e-books across all categories. Download instantly.
+                            </p>
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                <Link to="/books" className="btn-primary bg-white text-blue-700 hover:bg-gray-100">
+                                    <i className="fas fa-book-open" /> Browse Library
+                                </Link>
+                                <Link to="/categories" className="btn-outline border-white text-white hover:bg-white/20">
+                                    <i className="fas fa-tags" /> Categories
+                                </Link>
+                            </div>
+                            <div className="mt-6 flex gap-6 text-sm">
+                                <span><strong className="text-2xl">{stats.totalBooks}</strong> Books</span>
+                                <span><strong className="text-2xl">{stats.totalDownloads}</strong> Downloads</span>
+                                <span><strong className="text-2xl">{stats.totalCategories}</strong> Categories</span>
+                            </div>
+                        </div>
+                        <div className="absolute right-0 top-0 bottom-0 w-1/3 hidden lg:block opacity-20">
+                            <div className="text-9xl flex items-center justify-center h-full">📚</div>
+                        </div>
+                    </section>
+
+                    {/* Ad Banner */}
+                    <div className="ad-placeholder">
+                        <i className="fas fa-ad mr-2" /> Google AdSense Banner — 728×90
+                    </div>
+
+                    {/* Featured Books */}
+                    {featuredBooks.length > 0 && (
+                        <section>
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-2xl font-bold flex items-center gap-2">
+                                    <span className="text-yellow-500">⭐</span> Featured Books
+                                </h2>
+                                <Link to="/books" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">View all →</Link>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                {featuredBooks.slice(0, 5).map((book) => (
+                                    <BookCard key={book.id} book={book} />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Categories */}
+                    <section>
+                        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                            <i className="fas fa-tags text-blue-500" /> Categories
+                        </h2>
+                        <div className="flex flex-wrap gap-3">
+                            {categories.slice(0, 12).map((cat) => (
+                                <Link
+                                    key={cat}
+                                    to={`/books?category=${encodeURIComponent(cat)}`}
+                                    className="px-5 py-2.5 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors text-sm font-medium"
+                                >
+                                    {cat}
+                                </Link>
+                            ))}
+                            {categories.length > 12 && (
+                                <Link to="/categories" className="px-5 py-2.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-sm font-medium">
+                                    +{categories.length - 12} more
+                                </Link>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* New Releases */}
+                    <section>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                <i className="fas fa-clock text-green-500" /> New Releases
+                            </h2>
+                            <Link to="/books" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">View all →</Link>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {recentBooks.slice(0, 5).map((book) => (
+                                <BookCard key={book.id} book={book} />
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Popular Books */}
+                    <section>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                <i className="fas fa-fire text-orange-500" /> Popular Books
+                            </h2>
+                            <Link to="/books" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">View all →</Link>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {popularBooks.slice(0, 5).map((book) => (
+                                <BookCard key={book.id} book={book} />
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            );
+        }
+
+        // ── Book Card ──
+        function BookCard({ book }) {
+            const { isBookmarked, toggleBookmark, darkMode } = useApp();
+            const bookmarked = isBookmarked(book.id);
+
+            return (
+                <div className="book-card group">
+                    <Link to={`/book/${book.id}`}>
+                        <img
+                            src={book.coverUrl || 'https://via.placeholder.com/300x450/3b82f6/fff?text=📖'}
+                            alt={book.title}
+                            className="book-cover"
+                            loading="lazy"
+                            onError={(e) => { e.target.src = 'https://via.placeholder.com/300x450/3b82f6/fff?text=📖'; }}
+                        />
+                    </Link>
+                    <div className="p-3">
+                        <Link to={`/book/${book.id}`}>
+                            <h3 className="font-semibold text-sm truncate hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                {book.title || 'Untitled'}
+                            </h3>
+                        </Link>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{book.author || 'Unknown'}</p>
+                        <div className="flex items-center justify-between mt-2">
+                            <span className="badge badge-blue text-[10px]">{book.category || 'Uncategorized'}</span>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={(e) => { e.preventDefault();
+                                        toggleBookmark(book.id); }}
+                                    className={`text-sm transition-colors ${bookmarked ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                                    aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                                >
+                                    <i className={`fas ${bookmarked ? 'fa-star' : 'fa-star'}`} />
+                                </button>
+                                <span className="text-[10px] text-gray-400">
+                                    <i className="fas fa-download mr-0.5" /> {book.downloads || 0}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Books List ──
+        function BooksPage() {
+            const { books, categories } = useApp();
+            const location = useLocation();
+            const params = new URLSearchParams(location.search);
+            const categoryFilter = params.get('category') || '';
+            const [selectedCategory, setSelectedCategory] = useState(categoryFilter);
+            const [searchTerm, setSearchTerm] = useState('');
+
+            const filtered = books.filter((b) => {
+                const matchCategory = !selectedCategory || b.category === selectedCategory;
+                const matchSearch = !searchTerm ||
+                    b.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    b.author?.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchCategory && matchSearch;
+            });
+
+            useEffect(() => {
+                if (categoryFilter) setSelectedCategory(categoryFilter);
+            }, [categoryFilter]);
+
+            return (
+                <div>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                        <h1 className="text-2xl font-bold">📚 All Books</h1>
+                        <div className="flex flex-wrap gap-3">
+                            <input
+                                type="text"
+                                placeholder="Search books..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            />
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                className="px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                <option value="">All Categories</option>
+                                {categories.map((c) => (
+                                    <option key={c} value={c}>{c}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {filtered.length === 0 ? (
+                        <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+                            <i className="fas fa-book-open text-4xl mb-3 block" />
+                            <p className="text-lg">No books found matching your criteria.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                            {filtered.map((book) => (
+                                <BookCard key={book.id} book={book} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // ── Categories Page ──
+        function CategoriesPage() {
+            const { books, categories } = useApp();
+            const navigate = useNavigate();
+
+            const categoryCounts = {};
+            books.forEach((b) => {
+                if (b.category) {
+                    categoryCounts[b.category] = (categoryCounts[b.category] || 0) + 1;
+                }
+            });
+
+            return (
+                <div>
+                    <h1 className="text-2xl font-bold mb-6">🏷️ Categories</h1>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {categories.map((cat) => (
+                            <div
+                                key={cat}
+                                onClick={() => navigate(`/books?category=${encodeURIComponent(cat)}`)}
+                                className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all text-center"
+                            >
+                                <div className="text-3xl mb-2">📂</div>
+                                <div className="font-semibold">{cat}</div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">{categoryCounts[cat] || 0} books</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Book Detail ──
+        function BookDetailPage() {
+            const { id } = useParams();
+            const { books, isBookmarked, toggleBookmark, addToast, darkMode } = useApp();
+            const [book, setBook] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [related, setRelated] = useState([]);
+
+            useEffect(() => {
+                const fetchBook = async () => {
+                    setLoading(true);
+                    try {
+                        const docRef = doc(db, 'books', id);
+                        const snap = await getDoc(docRef);
+                        if (snap.exists()) {
+                            const data = { id: snap.id, ...snap.data() };
+                            setBook(data);
+                            // Related books
+                            const q = query(
+                                collection(db, 'books'),
+                                where('category', '==', data.category),
+                                limit(6)
+                            );
+                            const qSnap = await getDocs(q);
+                            const relatedList = [];
+                            qSnap.forEach((d) => {
+                                if (d.id !== id) relatedList.push({ id: d.id, ...d.data() });
+                            });
+                            setRelated(relatedList);
+                            // Increment view count (optional)
+                        } else {
+                            setBook(null);
+                        }
+                    } catch (e) {
+                        console.error('Error fetching book:', e);
+                    }
+                    setLoading(false);
+                };
+                if (id) fetchBook();
+            }, [id]);
+
+            const handleDownload = async () => {
+                if (!book) return;
+                try {
+                    // Increment download counter
+                    const docRef = doc(db, 'books', book.id);
+                    await updateDoc(docRef, {
+                        downloads: increment(1)
+                    });
+                    addToast('Download started!', 'success');
+                    // Open CDN link in new tab
+                    if (book.pdfUrl) {
+                        window.open(book.pdfUrl, '_blank');
+                    } else {
+                        addToast('No PDF URL available for this book.', 'error');
+                    }
+                } catch (e) {
+                    console.error('Download error:', e);
+                    addToast('Failed to record download.', 'error');
+                }
+            };
+
+            if (loading) {
+                return (
+                    <div className="flex justify-center py-20">
+                        <div className="text-center">
+                            <div className="skeleton w-16 h-16 rounded-full mx-auto mb-4" />
+                            <div className="skeleton w-48 h-6 mx-auto" />
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!book) {
+                return (
+                    <div className="text-center py-20">
+                        <i className="fas fa-book-open text-5xl text-gray-300 dark:text-gray-600 mb-4" />
+                        <h2 className="text-2xl font-bold">Book not found</h2>
+                        <p className="text-gray-500 dark:text-gray-400 mt-2">The book you're looking for doesn't exist.</p>
+                        <Link to="/books" className="btn-primary mt-4 inline-flex">Browse Books</Link>
+                    </div>
+                );
+            }
+
+            const bookmarked = isBookmarked(book.id);
+
+            return (
+                <div>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Cover */}
+                        <div className="md:col-span-1">
+                            <img
+                                src={book.coverUrl || 'https://via.placeholder.com/400x600/3b82f6/fff?text=📖'}
+                                alt={book.title}
+                                className="w-full rounded-2xl shadow-xl aspect-[2/3] object-cover"
+                                onError={(e) => { e.target.src = 'https://via.placeholder.com/400x600/3b82f6/fff?text=📖'; }}
+                            />
+                        </div>
+
+                        {/* Details */}
+                        <div className="md:col-span-2 space-y-4">
+                            <div>
+                                <span className="badge badge-blue">{book.category || 'Uncategorized'}</span>
+                                {book.featured && <span className="badge badge-gold ml-2">⭐ Featured</span>}
+                            </div>
+                            <h1 className="text-3xl md:text-4xl font-extrabold">{book.title}</h1>
+                            <p className="text-lg text-gray-600 dark:text-gray-300">by {book.author || 'Unknown'}</p>
+
+                            {book.language && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <i className="fas fa-language mr-1" /> {book.language}
+                                </p>
+                            )}
+
+                            {book.publishedDate && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <i className="fas fa-calendar mr-1" /> Published: {book.publishedDate}
+                                </p>
+                            )}
+
+                            {book.fileSize && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <i className="fas fa-file-pdf mr-1" /> File size: {book.fileSize}
+                                </p>
+                            )}
+
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <i className="fas fa-download mr-1" /> {book.downloads || 0} downloads
+                            </p>
+
+                            {book.description && (
+                                <div className="pt-2">
+                                    <h3 className="font-semibold mb-1">Description</h3>
+                                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{book.description}</p>
+                                </div>
+                            )}
+
+                            <div className="flex flex-wrap gap-3 pt-2">
+                                <button onClick={handleDownload} className="btn-primary">
+                                    <i className="fas fa-download" /> Download PDF
+                                </button>
+                                <button
+                                    onClick={() => toggleBookmark(book.id)}
+                                    className={`px-5 py-2.5 rounded-full font-semibold transition-colors ${bookmarked ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                >
+                                    <i className={`fas ${bookmarked ? 'fa-star' : 'fa-star'}`} /> {bookmarked ? 'Bookmarked' : 'Bookmark'}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        if (navigator.share) {
+                                            navigator.share({
+                                                title: book.title,
+                                                text: `Check out "${book.title}" by ${book.author}`,
+                                                url: window.location.href
+                                            });
+                                        } else {
+                                            navigator.clipboard.writeText(window.location.href);
+                                            addToast('Link copied to clipboard!', 'success');
+                                        }
+                                    }}
+                                    className="px-5 py-2.5 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-semibold"
+                                >
+                                    <i className="fas fa-share-alt" /> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Related Books */}
+                    {related.length > 0 && (
+                        <section className="mt-12">
+                            <h3 className="text-xl font-bold mb-4">📖 Related Books</h3>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                {related.slice(0, 5).map((b) => (
+                                    <BookCard key={b.id} book={b} />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Ad */}
+                    <div className="ad-placeholder mt-8">
+                        <i className="fas fa-ad mr-2" /> Google AdSense — Native
+                    </div>
+                </div>
+            );
+        }
+
+        // ── About ──
+        function AboutPage() {
+            return (
+                <div className="max-w-3xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-4">📖 About BookVault</h1>
+                    <div className="prose dark:prose-invert max-w-none space-y-4 text-gray-700 dark:text-gray-300">
+                        <p>
+                            <strong>BookVault</strong> is a premium e-book library platform designed to provide
+                            readers with instant access to thousands of titles across multiple categories.
+                        </p>
+                        <p>
+                            Our mission is to make knowledge and entertainment accessible to everyone,
+                            anywhere, at any time. We partner with authors and publishers to bring you
+                            the best digital reading experience.
+                        </p>
+                        <div className="grid sm:grid-cols-3 gap-4 my-6">
+                            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl text-center">
+                                <div className="text-3xl">📚</div>
+                                <div className="font-bold mt-1">Thousands of Books</div>
+                            </div>
+                            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl text-center">
+                                <div className="text-3xl">⚡</div>
+                                <div className="font-bold mt-1">Instant Downloads</div>
+                            </div>
+                            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl text-center">
+                                <div className="text-3xl">🔒</div>
+                                <div className="font-bold mt-1">Secure &amp; Private</div>
+                            </div>
+                        </div>
+                        <p>
+                            Built with modern technology, BookVault ensures fast loading times,
+                            responsive design, and a seamless reading experience on any device.
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Contact ──
+        function ContactPage() {
+            const { addToast } = useApp();
+            const [form, setForm] = useState({ name: '', email: '', message: '' });
+            const [submitting, setSubmitting] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setSubmitting(true);
+                setTimeout(() => {
+                    addToast('Message sent! We\'ll get back to you soon.', 'success');
+                    setForm({ name: '', email: '', message: '' });
+                    setSubmitting(false);
+                }, 1000);
+            };
+
+            return (
+                <div className="max-w-2xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-4">✉️ Contact Us</h1>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        Have a question or suggestion? We'd love to hear from you.
+                    </p>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label className="form-label">Your Name</label>
+                            <input
+                                type="text"
+                                value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                className="form-input"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">Email Address</label>
+                            <input
+                                type="email"
+                                value={form.email}
+                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                className="form-input"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">Message</label>
+                            <textarea
+                                rows="5"
+                                value={form.message}
+                                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                                className="form-input"
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="btn-primary w-full justify-center" disabled={submitting}>
+                            {submitting ? <><i className="fas fa-spinner fa-spin" /> Sending...</> : 'Send Message'}
+                        </button>
+                    </form>
+                </div>
+            );
+        }
+
+        // ── Privacy ──
+        function PrivacyPage() {
+            return (
+                <div className="max-w-3xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-4">🔒 Privacy Policy</h1>
+                    <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 space-y-3">
+                        <p><strong>Last updated:</strong> {new Date().toLocaleDateString()}</p>
+                        <p>BookVault respects your privacy. This policy explains how we collect, use, and protect your personal information.</p>
+                        <h3 className="font-bold text-lg mt-4">Information We Collect</h3>
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li>Email address (for account management)</li>
+                            <li>Bookmarks and reading preferences</li>
+                            <li>Anonymous usage analytics</li>
+                        </ul>
+                        <h3 className="font-bold text-lg mt-4">How We Use Your Data</h3>
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li>To provide and improve our services</li>
+                            <li>To personalize your reading experience</li>
+                            <li>To send occasional updates (you can opt out)</li>
+                        </ul>
+                        <p>We never sell your data to third parties.</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Terms ──
+        function TermsPage() {
+            return (
+                <div className="max-w-3xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-4">📜 Terms &amp; Conditions</h1>
+                    <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 space-y-3">
+                        <p><strong>Last updated:</strong> {new Date().toLocaleDateString()}</p>
+                        <p>By using BookVault, you agree to these terms.</p>
+                        <h3 className="font-bold text-lg mt-4">Use of Service</h3>
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li>You must be 13 years or older to use this service.</li>
+                            <li>All content is provided for personal, non-commercial use.</li>
+                            <li>Downloading and sharing copyrighted material without permission is prohibited.</li>
+                        </ul>
+                        <h3 className="font-bold text-lg mt-4">Disclaimer</h3>
+                        <p>BookVault provides books "as is" without warranties of any kind. We do not guarantee the accuracy or availability of any content.</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  ADMIN PANEL
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // ── Admin Auth Guard ──
+        function AdminGuard({ children }) {
+            const { user, loading, isAdmin, addToast } = useApp();
+            const navigate = useNavigate();
+
+            useEffect(() => {
+                if (!loading && !user) {
+                    addToast('Please log in to access the admin panel.', 'warning');
+                    navigate('/admin/login');
+                } else if (!loading && user && !isAdmin) {
+                    addToast('You do not have admin privileges.', 'error');
+                    navigate('/');
+                }
+            }, [user, loading, isAdmin, navigate]);
+
+            if (loading) {
+                return (
+                    <div className="flex justify-center py-20">
+                        <div className="text-center">
+                            <div className="skeleton w-16 h-16 rounded-full mx-auto mb-4" />
+                            <div className="skeleton w-48 h-6 mx-auto" />
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!user || !isAdmin) return null;
+            return children;
+        }
+
+        // ── Admin Login ──
+        function AdminLoginPage() {
+            const { user, isAdmin, addToast } = useApp();
+            const navigate = useNavigate();
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            useEffect(() => {
+                if (user && isAdmin) {
+                    navigate('/admin/dashboard');
+                }
+            }, [user, isAdmin]);
+
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    addToast('Welcome back, Admin!', 'success');
+                } catch (err) {
+                    addToast(err.message || 'Login failed. Please try again.', 'error');
+                }
+                setLoading(false);
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+                    <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
+                        <div className="text-center mb-6">
+                            <div className="text-4xl mb-2">🔐</div>
+                            <h1 className="text-2xl font-bold">Admin Login</h1>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Enter your credentials to access the admin panel</p>
+                        </div>
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <div>
+                                <label className="form-label">Email</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="form-input"
+                                    placeholder="admin@bookvault.com"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="form-label">Password</label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="form-input"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                            </div>
+                            <button type="submit" className="btn-primary w-full justify-center" disabled={loading}>
+                                {loading ? <><i className="fas fa-spinner fa-spin" /> Logging in...</> : 'Login'}
+                            </button>
+                        </form>
+                        <p className="text-center text-xs text-gray-400 mt-4">
+                            Demo: admin@bookvault.com / admin123
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Admin Layout ──
+        function AdminLayout({ children }) {
+            const { user, addToast, darkMode, setDarkMode } = useApp();
+            const navigate = useNavigate();
+            const location = useLocation();
+            const [sidebarOpen, setSidebarOpen] = useState(false);
+
+            const navItems = [
+                { to: '/admin/dashboard', label: 'Dashboard', icon: 'fa-chart-simple' },
+                { to: '/admin/books', label: 'Books', icon: 'fa-book' },
+                { to: '/admin/add-book', label: 'Add Book', icon: 'fa-plus-circle' },
+                { to: '/admin/categories', label: 'Categories', icon: 'fa-tags' },
+                { to: '/admin/users', label: 'Users', icon: 'fa-users' },
+            ];
+
+            const handleLogout = async () => {
+                try {
+                    await signOut(auth);
+                    addToast('Logged out successfully.', 'success');
+                    navigate('/admin/login');
+                } catch (e) {
+                    addToast('Logout failed.', 'error');
+                }
+            };
+
+            return (
+                <div className="relative">
+                    {/* Mobile toggle */}
+                    <button
+                        className="admin-toggle"
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                    >
+                        <i className={`fas ${sidebarOpen ? 'fa-times' : 'fa-bars'}`} />
+                    </button>
+                    {sidebarOpen && (
+                        <div className="mobile-overlay open" onClick={() => setSidebarOpen(false)} />
+                    )}
+
+                    {/* Sidebar */}
+                    <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
+                        <div className="flex items-center gap-2 text-xl font-extrabold text-blue-400 mb-6">
+                            <span>📚</span> BookVault <span className="text-xs text-gray-500 font-normal">Admin</span>
+                        </div>
+                        <nav className="space-y-1">
+                            {navItems.map((item) => (
+                                <Link
+                                    key={item.to}
+                                    to={item.to}
+                                    className={`nav-item ${location.pathname === item.to ? 'active' : ''}`}
+                                    onClick={() => setSidebarOpen(false)}
+                                >
+                                    <i className={`fas ${item.icon}`} /> {item.label}
+                                </Link>
+                            ))}
+                        </nav>
+                        <div className="absolute bottom-6 left-4 right-4">
+                            <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-gray-800/40">
+                                <div className="flex items-center gap-2 truncate">
+                                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold">
+                                        {user?.email?.[0]?.toUpperCase() || 'A'}
+                                    </div>
+                                    <div className="text-xs truncate">
+                                        <div className="font-semibold">{user?.email || 'Admin'}</div>
+                                        <div className="text-gray-400 text-[10px]">Admin</div>
+                                    </div>
+                                </div>
+                                <button onClick={handleLogout} className="text-gray-400 hover:text-red-400 transition-colors" title="Logout">
+                                    <i className="fas fa-sign-out-alt" />
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Content */}
+                    <div className="admin-content">
+                        <div className="flex justify-end mb-4">
+                            <button
+                                onClick={() => setDarkMode(!darkMode)}
+                                className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            >
+                                {darkMode ? '☀️' : '🌙'}
+                            </button>
+                        </div>
+                        {children}
+                    </div>
+                    <ToastContainer />
+                </div>
+            );
+        }
+
+        // ── Admin Dashboard ──
+        function AdminDashboard() {
+            const { stats, books, categories, addToast } = useApp();
+            const [recentDownloads, setRecentDownloads] = useState([]);
+
+            // Get top downloaded books
+            const topBooks = [...books].sort((a, b) => (b.downloads || 0) - (a.downloads || 0)).slice(0, 5);
+
+            return (
+                <div>
+                    <h1 className="text-2xl font-bold mb-6">📊 Dashboard</h1>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Total Books</div>
+                            <div className="text-3xl font-bold">{stats.totalBooks}</div>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Total Downloads</div>
+                            <div className="text-3xl font-bold">{stats.totalDownloads}</div>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Categories</div>
+                            <div className="text-3xl font-bold">{stats.totalCategories}</div>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Featured</div>
+                            <div className="text-3xl font-bold">{books.filter(b => b.featured).length}</div>
+                        </div>
+                    </div>
+
+                    {/* Top Books */}
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h2 className="font-bold text-lg mb-4">🔥 Top Downloaded Books</h2>
+                        {topBooks.length === 0 ? (
+                            <p className="text-gray-500 dark:text-gray-400 text-center py-4">No books yet.</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {topBooks.map((b, i) => (
+                                    <div key={b.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                        <span className="font-bold text-lg w-8 text-center text-gray-400">#{i + 1}</span>
+                                        <img src={b.coverUrl || 'https://via.placeholder.com/40x60/3b82f6/fff?text=📖'} alt={b.title} className="w-10 h-14 object-cover rounded" />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-semibold truncate">{b.title || 'Untitled'}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400 truncate">{b.author || 'Unknown'}</div>
+                                        </div>
+                                        <div className="text-sm font-medium">
+                                            <i className="fas fa-download mr-1" /> {b.downloads || 0}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Admin Books List ──
+        function AdminBooks() {
+            const { books, addToast } = useApp();
+            const navigate = useNavigate();
+
+            const handleDelete = async (id, title) => {
+                if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+                try {
+                    await deleteDoc(doc(db, 'books', id));
+                    addToast(`"${title}" deleted successfully.`, 'success');
+                } catch (e) {
+                    addToast('Failed to delete book.', 'error');
+                }
+            };
+
+            return (
+                <div>
+                    <div className="flex items-center justify-between mb-6">
+                        <h1 className="text-2xl font-bold">📚 Manage Books</h1>
+                        <Link to="/admin/add-book" className="btn-primary">
+                            <i className="fas fa-plus" /> Add Book
+                        </Link>
+                    </div>
+
+                    {books.length === 0 ? (
+                        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                            <i className="fas fa-book text-4xl mb-3 block" />
+                            <p>No books in the library yet.</p>
+                            <Link to="/admin/add-book" className="btn-primary mt-4 inline-flex">
+                                Add your first book
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left font-semibold">Cover</th>
+                                        <th className="px-4 py-3 text-left font-semibold">Title</th>
+                                        <th className="px-4 py-3 text-left font-semibold hidden md:table-cell">Author</th>
+                                        <th className="px-4 py-3 text-left font-semibold hidden lg:table-cell">Category</th>
+                                        <th className="px-4 py-3 text-left font-semibold">Downloads</th>
+                                        <th className="px-4 py-3 text-left font-semibold">Featured</th>
+                                        <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                    {books.map((b) => (
+                                        <tr key={b.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                            <td className="px-4 py-3">
+                                                <img src={b.coverUrl || 'https://via.placeholder.com/40x60/3b82f6/fff?text=📖'} alt={b.title} className="w-10 h-14 object-cover rounded" />
+                                            </td>
+                                            <td className="px-4 py-3 font-medium truncate max-w-[120px]">{b.title || 'Untitled'}</td>
+                                            <td className="px-4 py-3 truncate max-w-[100px] hidden md:table-cell">{b.author || 'Unknown'}</td>
+                                            <td className="px-4 py-3 hidden lg:table-cell">
+                                                <span className="badge badge-blue text-[10px]">{b.category || 'Uncategorized'}</span>
+                                            </td>
+                                            <td className="px-4 py-3">{b.downloads || 0}</td>
+                                            <td className="px-4 py-3">
+                                                {b.featured ? '⭐' : '—'}
+                                            </td>
+                                            <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
+                                                <Link to={`/admin/edit-book/${b.id}`} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                                    <i className="fas fa-edit" />
+                                                </Link>
+                                                <button onClick={() => handleDelete(b.id, b.title)} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                                                    <i className="fas fa-trash" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // ── Admin Add / Edit Book ──
+        function AdminBookForm({ mode = 'add', bookId = null }) {
+            const { addToast, books } = useApp();
+            const navigate = useNavigate();
+            const [loading, setLoading] = useState(false);
+            const [form, setForm] = useState({
+                title: '',
+                author: '',
+                category: '',
+                language: '',
+                description: '',
+                coverUrl: '',
+                pdfUrl: '',
+                fileSize: '',
+                featured: false,
+                publishedDate: '',
+            });
+
+            useEffect(() => {
+                if (mode === 'edit' && bookId) {
+                    const existing = books.find((b) => b.id === bookId);
+                    if (existing) {
+                        setForm({
+                            title: existing.title || '',
+                            author: existing.author || '',
+                            category: existing.category || '',
+                            language: existing.language || '',
+                            description: existing.description || '',
+                            coverUrl: existing.coverUrl || '',
+                            pdfUrl: existing.pdfUrl || '',
+                            fileSize: existing.fileSize || '',
+                            featured: existing.featured || false,
+                            publishedDate: existing.publishedDate || '',
+                        });
+                    }
+                }
+            }, [mode, bookId, books]);
+
+            const handleChange = (e) => {
+                const { name, value, type, checked } = e.target;
+                setForm((prev) => ({
+                    ...prev,
+                    [name]: type === 'checkbox' ? checked : value,
+                }));
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+
+                // Validation
+                if (!form.title.trim()) { addToast('Book title is required.', 'error');
+                    setLoading(false); return; }
+                if (!form.author.trim()) { addToast('Author name is required.', 'error');
+                    setLoading(false); return; }
+                if (!form.category.trim()) { addToast('Category is required.', 'error');
+                    setLoading(false); return; }
+                if (!form.pdfUrl.trim()) { addToast('PDF CDN URL is required.', 'error');
+                    setLoading(false); return; }
+
+                try {
+                    const data = {
+                        ...form,
+                        downloads: mode === 'add' ? 0 : (books.find(b => b.id === bookId)?.downloads || 0),
+                        updatedAt: serverTimestamp(),
+                    };
+
+                    if (mode === 'add') {
+                        data.createdAt = serverTimestamp();
+                        await addDoc(collection(db, 'books'), data);
+                        addToast('Book added successfully!', 'success');
+                    } else {
+                        const ref = doc(db, 'books', bookId);
+                        await updateDoc(ref, data);
+                        addToast('Book updated successfully!', 'success');
+                    }
+                    navigate('/admin/books');
+                } catch (err) {
+                    addToast('Failed to save book. Please try again.', 'error');
+                    console.error(err);
+                }
+                setLoading(false);
+            };
+
+            return (
+                <div className="max-w-3xl mx-auto">
+                    <h1 className="text-2xl font-bold mb-6">
+                        {mode === 'add' ? '📝 Add New Book' : '✏️ Edit Book'}
+                    </h1>
+                    <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="form-label">Book Title *</label>
+                                <input name="title" value={form.title} onChange={handleChange} className="form-input" placeholder="e.g. The Great Gatsby" required />
+                            </div>
+                            <div>
+                                <label className="form-label">Author Name *</label>
+                                <input name="author" value={form.author} onChange={handleChange} className="form-input" placeholder="e.g. F. Scott Fitzgerald" required />
+                            </div>
+                        </div>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="form-label">Category *</label>
+                                <input name="category" value={form.category} onChange={handleChange} className="form-input" placeholder="e.g. Fiction, Science, History" required />
+                            </div>
+                            <div>
+                                <label className="form-label">Language</label>
+                                <input name="language" value={form.language} onChange={handleChange} className="form-input" placeholder="e.g. English, Spanish" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="form-label">Description</label>
+                            <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="form-input" placeholder="Brief description of the book..." />
+                        </div>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="form-label">Cover Image URL</label>
+                                <input name="coverUrl" value={form.coverUrl} onChange={handleChange} className="form-input" placeholder="https://example.com/cover.jpg" />
+                                <p className="text-xs text-gray-400 mt-1">Paste a URL to the cover image (CDN or any hosting)</p>
+                            </div>
+                            <div>
+                                <label className="form-label">CDN PDF URL *</label>
+                                <input name="pdfUrl" value={form.pdfUrl} onChange={handleChange} className="form-input" placeholder="https://cdn.example.com/book.pdf" required />
+                                <p className="text-xs text-gray-400 mt-1">Paste the direct CDN link to the PDF file</p>
+                            </div>
+                        </div>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="form-label">File Size</label>
+                                <input name="fileSize" value={form.fileSize} onChange={handleChange} className="form-input" placeholder="e.g. 2.4 MB" />
+                            </div>
+                            <div>
+                                <label className="form-label">Published Date</label>
+                                <input name="publishedDate" value={form.publishedDate} onChange={handleChange} className="form-input" placeholder="e.g. 2024-01-15" />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <input name="featured" type="checkbox" checked={form.featured} onChange={handleChange} className="w-5 h-5 accent-blue-600" />
+                            <label className="font-medium">⭐ Feature this book (appears on homepage)</label>
+                        </div>
+
+                        <div className="flex gap-3 pt-2">
+                            <button type="submit" className="btn-primary" disabled={loading}>
+                                {loading ? <><i className="fas fa-spinner fa-spin" /> Saving...</> : (mode === 'add' ? 'Add Book' : 'Update Book')}
+                            </button>
+                            <Link to="/admin/books" className="btn-outline">Cancel</Link>
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+
+        // ── Admin Categories ──
+        function AdminCategories() {
+            const { books, categories, addToast } = useApp();
+            const [newCategory, setNewCategory] = useState('');
+            const [editing, setEditing] = useState(null);
+            const [editValue, setEditValue] = useState('');
+
+            const categoryCounts = {};
+            books.forEach((b) => {
+                if (b.category) {
+                    categoryCounts[b.category] = (categoryCounts[b.category] || 0) + 1;
+                }
+            });
+
+            const handleAddCategory = () => {
+                if (!newCategory.trim()) return;
+                if (categories.includes(newCategory.trim())) {
+                    addToast('Category already exists.', 'warning');
+                    return;
+                }
+                // Just add to the list (categories are derived from books)
+                // We'll create a dummy book or just update the state
+                // In a real app, you'd have a categories collection
+                addToast(`Category "${newCategory.trim()}" added. You can now assign it to books.`, 'success');
+                setNewCategory('');
+            };
+
+            const handleRenameCategory = async (oldName, newName) => {
+                if (!newName.trim() || oldName === newName.trim()) {
+                    setEditing(null);
+                    return;
+                }
+                if (categories.includes(newName.trim())) {
+                    addToast('Category already exists.', 'warning');
+                    return;
+                }
+                // Update all books with this category
+                try {
+                    const q = query(collection(db, 'books'), where('category', '==', oldName));
+                    const snap = await getDocs(q);
+                    const batch = writeBatch(db);
+                    snap.forEach((doc) => {
+                        batch.update(doc.ref, { category: newName.trim() });
+                    });
+                    await batch.commit();
+                    addToast(`Category renamed from "${oldName}" to "${newName.trim()}"`, 'success');
+                } catch (e) {
+                    addToast('Failed to rename category.', 'error');
+                }
+                setEditing(null);
+            };
+
+            const handleDeleteCategory = async (cat) => {
+                if (!confirm(`Delete category "${cat}"? This will remove it from all books.`)) return;
+                try {
+                    const q = query(collection(db, 'books'), where('category', '==', cat));
+                    const snap = await getDocs(q);
+                    const batch = writeBatch(db);
+                    snap.forEach((doc) => {
+                        batch.update(doc.ref, { category: '' });
+                    });
+                    await batch.commit();
+                    addToast(`Category "${cat}" removed from all books.`, 'success');
+                } catch (e) {
+                    addToast('Failed to delete category.', 'error');
+                }
+            };
+
+            return (
+                <div>
+                    <div className="flex items-center justify-between mb-6">
+                        <h1 className="text-2xl font-bold">🏷️ Manage Categories</h1>
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                        <h3 className="font-semibold mb-3">Add New Category</h3>
+                        <div className="flex gap-3">
+                            <input
+                                type="text"
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                                className="form-input flex-1"
+                                placeholder="Enter category name..."
+                                onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
+                            />
+                            <button onClick={handleAddCategory} className="btn-primary">Add</button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {categories.map((cat) => (
+                            <div key={cat} className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                                {editing === cat ? (
+                                    <div className="flex-1 flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={editValue}
+                                            onChange={(e) => setEditValue(e.target.value)}
+                                            className="form-input flex-1 py-1 px-2 text-sm"
+                                            autoFocus
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') handleRenameCategory(cat, editValue);
+                                                if (e.key === 'Escape') setEditing(null);
+                                            }}
+                                        />
+                                        <button onClick={() => handleRenameCategory(cat, editValue)} className="text-green-600 hover:text-green-800">
+                                            <i className="fas fa-check" />
+                                        </button>
+                                        <button onClick={() => setEditing(null)} className="text-gray-500 hover:text-gray-700">
+                                            <i className="fas fa-times" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <div className="font-medium">{cat}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-400">{categoryCounts[cat] || 0} books</div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => { setEditing(cat);
+                                                    setEditValue(cat); }}
+                                                className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                                            >
+                                                <i className="fas fa-pen" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteCategory(cat)}
+                                                className="text-red-500 hover:text-red-700 dark:text-red-400"
+                                            >
+                                                <i className="fas fa-trash" />
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // ── Admin Users ──
+        function AdminUsers() {
+            const { addToast } = useApp();
+            const [users, setUsers] = useState([]);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                // In production, you'd fetch users from Firebase Auth or a users collection
+                // For demo, we'll show a placeholder
+                setLoading(false);
+                setUsers([
+                    { uid: '1', email: 'admin@bookvault.com', role: 'admin', createdAt: new Date().toISOString() },
+                    { uid: '2', email: 'user@example.com', role: 'user', createdAt: new Date().toISOString() },
+                ]);
+            }, []);
+
+            return (
+                <div>
+                    <h1 className="text-2xl font-bold mb-6">👥 User Management</h1>
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left font-semibold">Email</th>
+                                        <th className="px-4 py-3 text-left font-semibold">Role</th>
+                                        <th className="px-4 py-3 text-left font-semibold hidden md:table-cell">Joined</th>
+                                        <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                    {users.map((u) => (
+                                        <tr key={u.uid} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                            <td className="px-4 py-3">{u.email}</td>
+                                            <td className="px-4 py-3">
+                                                <span className={`badge ${u.role === 'admin' ? 'badge-gold' : 'badge-blue'}`}>
+                                                    {u.role}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 hidden md:table-cell text-gray-500 dark:text-gray-400">
+                                                {new Date(u.createdAt).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                <button className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                                                    <i className="fas fa-edit" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-4">
+                        ⚡ In production, user management requires Firebase Admin SDK or custom backend.
+                    </p>
+                </div>
+            );
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  ROUTER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function App() {
+            return (
+                <AppProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            {/* Public */}
+                            <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+                            <Route path="/books" element={<PublicLayout><BooksPage /></PublicLayout>} />
+                            <Route path="/book/:id" element={<PublicLayout><BookDetailPage /></PublicLayout>} />
+                            <Route path="/categories" element={<PublicLayout><CategoriesPage /></PublicLayout>} />
+                            <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+                            <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+                            <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
+                            <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
+
+                            {/* Admin */}
+                            <Route path="/admin/login" element={<AdminLoginPage />} />
+                            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                            <Route
+                                path="/admin/dashboard"
+                                element={
+                                    <AdminGuard>
+                                        <AdminLayout><AdminDashboard /></AdminLayout>
+                                    </AdminGuard>
+                                }
+                            />
+                            <Route
+                                path="/admin/books"
+                                element={
+                                    <AdminGuard>
+                                        <AdminLayout><AdminBooks /></AdminLayout>
+                                    </AdminGuard>
+                                }
+                            />
+                            <Route
+                                path="/admin/add-book"
+                                element={
+                                    <AdminGuard>
+                                        <AdminLayout><AdminBookForm mode="add" /></AdminLayout>
+                                    </AdminGuard>
+                                }
+                            />
+                            <Route
+                                path="/admin/edit-book/:id"
+                                element={
+                                    <AdminGuard>
+                                        <AdminLayout><AdminBookForm mode="edit" bookId={useParams().id} /></AdminLayout>
+                                    </AdminGuard>
+                                }
+                            />
+                            <Route
+                                path="/admin/categories"
+                                element={
+                                    <AdminGuard>
+                                        <AdminLayout><AdminCategories /></AdminLayout>
+                                    </AdminGuard>
+                                }
+                            />
+                            <Route
+                                path="/admin/users"
+                                element={
+                                    <AdminGuard>
+                                        <AdminLayout><AdminUsers /></AdminLayout>
+                                    </AdminGuard>
+                                }
+                            />
+
+                            {/* 404 */}
+                            <Route path="*" element={<PublicLayout><div className="text-center py-20"><h1 className="text-4xl font-bold">404</h1><p className="text-gray-500">Page not found.</p></div></PublicLayout>} />
+                        </Routes>
+                    </BrowserRouter>
+                </AppProvider>
+            );
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  RENDER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+</body>
+</html>
+    
+  </body>
+  
+</html>
